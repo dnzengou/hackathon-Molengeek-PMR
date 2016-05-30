@@ -34,17 +34,18 @@ License can be found here: http://code.google.com/apis/ajaxsearch/faq/#license
             
             var map, layer;
             var googleApiKey = "AIzaSyCsbzuJDUEOoq-jS1HO-LUXW4qo0gW9FNs"; // Get from Google API console https://code.google.com/apis/console
-			var geometryColumn = "geometry"; // geometry column name, may be Address for a points map
-			var tableid = '1bpjVp3U_Etpq_57_lz_E4thrh-qXHSDs4jI4_doX'; // Take from Fusion Tables About page. You must use encrypted tableid
+			var geometryColumn = "latlon"; // geometry column name, may be Address for a points map
+			var tableid = '1bpjVp3U_Etpq_57_lz_E4thrh-qXHSDs4jI4_doX'; // Take from Fusion Tables About page
 			var defaultCenter = new google.maps.LatLng(50.8503, 4.3517); // Map centre in lat/lon for default and reset
-			var defaultZoom = 10; // Zoom level for default map view and reset
-			var searchZoom = 12; // Zoom level for map search
+			var defaultZoom = 12; // Zoom level for default map view and reset
+			var searchZoom = 14; // Zoom level for map search
 			var geocodeBias = ", Greater Vancouver, BC" // Can add a bias to tack onto the end of address searches. Leave blank for none
-			var tooltipFields = "'FSA', 'Place'" // Fields to show on tooltip
-			var delay = 200; // milliseconds mouse pause before send a server query. default 300.
-			var tolerance = 1; // tolerance in pixel around mouse. default is 6. want a bigger number for point maps
+			var tooltipFields = "'Name', 'Address'" // Fields to show on tooltip
+			var delay = 100; // milliseconds mouse pause before send a server query. default 300.
+			var tolerance = 50; // tolerance in pixel around mouse. default is 6. want a bigger number for point maps
             
 			function loadMap() {
+              //NOTE: you must use the encrypted tableid
               var geocoder = new google.maps.Geocoder();
 			  
 			  layer = new google.maps.FusionTablesLayer({
