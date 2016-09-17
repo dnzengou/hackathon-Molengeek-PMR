@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
     <title>PMR map</title>
 
     <link href=
     "//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Product+Sans:400&amp;lang=en" rel=
     "stylesheet">
 
-    <!-- ===========================
-    STYLESHEETS
-    =========================== -->
+<!-- favicons -->
 
   <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -21,10 +19,6 @@
     <!-- Custom Fonts -->
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <!--<link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">-->
-    <link rel="stylesheet" media="screen" href="css/application-6aca95a9b37301feabd9c48a1b7ac6da92d79c57bb349a8fe97ff764f882ee64.css" /><!--[if IE 6] = stylesheet_link_tag 'ie6'--><!--[if IE 7] = stylesheet_link_tag 'ie7'--><style type="text/css">
 
     <style>
       html, body {
@@ -148,19 +142,19 @@
         <body onload="initialize();">
 
 <div>
-      <label>Leave from </label>
+      <label><strong>Leave from </strong></label>
       <input type="text" id="address" value="">
       <input type="button" id="search" value="Search">
       <input type="button" id="reset" value="Reset">
-
-      <label>to </label>
+<br>
+      <label><strong>To </strong></label>
       <input type="text" id="address" value="">
     </div>
 
-<div class="accessibility-container small-12 medium-6 large-5 columns nopl nopr">
+<!--<div class="accessibility-container small-12 medium-6 large-5 columns nopl nopr">
   <ul class="small-block-grid-8 medium-block-grid-8 large-block-grid-8">
-    <li><input id="" name="destination-handicaps[]" type="checkbox" value="6" />
-      <label aria-haspopup="true" class="material-icons" data-tooltip="" for="destination_search_handicap_6" id="search_handicap_6" role="tooltip" tabindex="0" title="Personnes qui ont des difficultés à entendre, elles ont des difficultés d’élocution aussi."></label></li><li><input id="destination_search_handicap_3" name="destination-handicaps[]" type="checkbox" value="3" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_3" id="search_handicap_3" role="tooltip" tabindex="0" title="Personnes qui ont une surdité totale."></label></li><li><input id="destination_search_handicap_7" name="destination-handicaps[]" type="checkbox" value="7" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_7" id="search_handicap_7" role="tooltip" tabindex="0" title="Personnes qui ont une altération momentanée de leurs capacités, quelques aménagements ou simplifications de parcours sont à apporter."></label></li><li><input id="destination_search_handicap_2" name="destination-handicaps[]" type="checkbox" value="2" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_2" id="search_handicap_2" role="tooltip" tabindex="0" title="Personnes qui ont une incapacité caractérisée par des limitations significatives du fonctionnement intellectuel et des limitations significatives des habiletés adoptives conceptuelles, sociales et pratiques."></label></li><li><input id="destination_search_handicap_1" name="destination-handicaps[]" type="checkbox" value="1" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_1" id="search_handicap_1" role="tooltip" tabindex="0" title="Personnes qui ne peuvent pas marcher dû à une paralysie, déformation, malformation ou dysfonctionnement d’un membre inférieur."></label></li><li><input id="destination_search_handicap_8" name="destination-handicaps[]" type="checkbox" value="8" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_8" id="search_handicap_8" role="tooltip" tabindex="0" title="Personnes qui éprouvent des difficultés à marcher."></label></li><li><input id="destination_search_handicap_5" name="destination-handicaps[]" type="checkbox" value="5" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_5" id="search_handicap_5" role="tooltip" tabindex="0" title="Personnes qui ont des difficultés à voir de loin, lire en vision fine, se repérer dans l’espace, s’orienter, se déplacer ou encore reconnaitre sans se tromper une personne."></label></li><li><input id="destination_search_handicap_4" name="destination-handicaps[]" type="checkbox" value="4" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_4" id="search_handicap_4" role="tooltip" tabindex="0" title="Personnes qui ont une cécité complète."></label></li></ul></div>
+    <li><input id="destination_search_handicap_6" name="destination-handicaps[]" type="checkbox" value="6" />
+      <label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_6" id="search_handicap_6" role="tooltip" tabindex="0" title="Personnes qui ont des difficultés à entendre, elles ont des difficultés d’élocution aussi."></label></li><li><input id="destination_search_handicap_3" name="destination-handicaps[]" type="checkbox" value="3" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_3" id="search_handicap_3" role="tooltip" tabindex="0" title="Personnes qui ont une surdité totale."></label></li><li><input id="destination_search_handicap_7" name="destination-handicaps[]" type="checkbox" value="7" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_7" id="search_handicap_7" role="tooltip" tabindex="0" title="Personnes qui ont une altération momentanée de leurs capacités, quelques aménagements ou simplifications de parcours sont à apporter."></label></li><li><input id="destination_search_handicap_2" name="destination-handicaps[]" type="checkbox" value="2" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_2" id="search_handicap_2" role="tooltip" tabindex="0" title="Personnes qui ont une incapacité caractérisée par des limitations significatives du fonctionnement intellectuel et des limitations significatives des habiletés adoptives conceptuelles, sociales et pratiques."></label></li><li><input id="destination_search_handicap_1" name="destination-handicaps[]" type="checkbox" value="1" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_1" id="search_handicap_1" role="tooltip" tabindex="0" title="Personnes qui ne peuvent pas marcher dû à une paralysie, déformation, malformation ou dysfonctionnement d’un membre inférieur."></label></li><li><input id="destination_search_handicap_8" name="destination-handicaps[]" type="checkbox" value="8" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_8" id="search_handicap_8" role="tooltip" tabindex="0" title="Personnes qui éprouvent des difficultés à marcher."></label></li><li><input id="destination_search_handicap_5" name="destination-handicaps[]" type="checkbox" value="5" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_5" id="search_handicap_5" role="tooltip" tabindex="0" title="Personnes qui ont des difficultés à voir de loin, lire en vision fine, se repérer dans l’espace, s’orienter, se déplacer ou encore reconnaitre sans se tromper une personne."></label></li><li><input id="destination_search_handicap_4" name="destination-handicaps[]" type="checkbox" value="4" /><label aria-haspopup="true" class="has-tip help-icon" data-tooltip="" for="destination_search_handicap_4" id="search_handicap_4" role="tooltip" tabindex="0" title="Personnes qui ont une cécité complète."></label></li></ul></div>-->
 
 
 <!--<form action="location.html">
