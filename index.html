@@ -1,31 +1,13 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Map with Transit layer</title>
 
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- ===========================
-    THEME INFO
-    =========================== -->
-    <meta name="description" content="">
-    <meta name="keywords" content="">
-    <meta name="author" content="">
-
-    <!-- ===========================
-    SITE TITLE
-    =========================== -->
-    <title>ApiJam</title>
-
-    <!-- ===========================
-    FAVICONS
-    =========================== -->
-    <link rel="icon" href="img/favicon.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="img/apple-touch-icon-ipad-retina.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="img/apple-touch-icon-iphone-retina.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="img/apple-touch-icon-ipad.png" />
-    <link rel="apple-touch-icon" sizes="57x57" href="img/apple-touch-icon-iphone.png" />
+    <link href=
+    "//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Product+Sans:400&amp;lang=en" rel=
+    "stylesheet">
 
     <!-- ===========================
     STYLESHEETS
@@ -33,662 +15,162 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-    <!-- ===========================
-    FONTS & ICONS
-    =========================== -->
-    <link href='//fonts.googleapis.com/css?family=Kristi|Alegreya+Sans:300' rel='stylesheet' type='text/css'>
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
+
+     <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true&amp;language=en&amp;callback=initMap&amp;signed_in=true">
+        </script>
 
 
-    <!--[if IE]>
-        <script src="https://cdn.jsdelivr.net/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-</head>
-
-<!--<!-- google analytics snippet -->
-<!--<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-76586418-1', 'auto');
-  ga('send', 'pageview');
-
-</script>-->
-<!-- google analytics snippet end -->
-
-<body><!-- google analytics PHP -->
-    <?php include_once("analyticstracking.php") ?>
-    <div class="container"><!-- google analytics PHP end -->
-        <!-- ===========================
-        HEADER
-        ============================ -->
+        <script type="text/javascript" src="js/fusiontips.js">
+        </script>
+        <script type="text/javascript" id="script">
+            
+            var map, layer;
+            var googleApiKey = "AIzaSyCsbzuJDUEOoq-jS1HO-LUXW4qo0gW9FNs"; // Get from Google API console https://code.google.com/apis/console
+      var geometryColumn = "latlon"; // geometry column name, may be Address for a points map
+      var tableid = '1hZisuyJgLTO_1CrtRUFY3shwgN9A9dSVl6r227XR'; // Take from Fusion Tables About page -- initially 1bpjVp3U_Etpq_57_lz_E4thrh-qXHSDs4jI4_doX
+      var defaultCenter = new google.maps.LatLng(50.8504, 4.3517); // Map centre in lat/lon for default and reset
+      var defaultZoom = 11; // Zoom level for default map view and reset
+      var searchZoom = 14; // Zoom level for map search
+      var geocodeBias = ", , " // Can add a bias to tack onto the end of address searches. Leave blank for none
+      var tooltipFields = "'Name', 'Address'" // Fields to show on tooltip
+      var delay = 100; // milliseconds mouse pause before send a server query. default 300.
+      var tolerance = 50; // tolerance in pixel around mouse. default is 6. want a bigger number for point maps
+            
+      function loadMap() {
+              //NOTE: you must use the encrypted tableid
+              var geocoder = new google.maps.Geocoder();
         
-        <div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.6&appId=483376235199121";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+        layer = new google.maps.FusionTablesLayer({
+                query: {
+                  select: geometryColumn, // pulls geometry column name, may be Address for a points map
+                  from: tableid
+                },
+                map: map,
+        styleId: 2,
+        templateId: 2
+              });
+              layer.enableMapTips({
+                select: tooltipFields, // pulls list of columns to query, cam have only one column
+                from: tableid, // pulls fusion table name referenced above
+                geometryColumn: geometryColumn, // pulls geometry column name, may be Address for a points map
+                suppressMapTips: false, // optional, whether to show map tips. default false
+                delay: delay, // pulls milliseconds mouse pause before send a server query. default 300.
+                tolerance: tolerance, // pulls tolerance in pixel around mouse. default is 6. want a bigger number for point maps
+                googleApiKey: googleApiKey // pulls API key from above
+              });
+              map.setCenter(defaultCenter);
+              map.setZoom(defaultZoom);
+              addListeners();
         
-        
-    <div
-  class="fb-like"
-  data-share="true"
-  data-width="450"
-  data-show-faces="true">
-    </div>
-        
-        <div id="header" class="row">
-            <div class="col-sm-2">
-                <img class="propic" src="img/logo.png" alt="">
-            </div>
-            <!-- photo end-->
-
-            <div class="col-sm-10">
-                <div class="title">
-                    <div class="row">
-                        <div class="col-sm-7" style="color:#3b5998">
-                            <h1>ApiJam</h1>
-                        </div>
-                        <div class="col-sm-5 text-right">
-                            <!-- AddToAny BEGIN -->
-                            <!--<a class="a2a_dd btn btn-default" href=""><span class="fa fa-share "></span> Share</a>
-                            <script type="text/javascript">
-                                var a2a_config = a2a_config || {};
-                                a2a_config.linkname = "Sharing is Caring.";
-                                a2a_config.num_services = 6;
-                                a2a_config.prioritize = ["facebook", "twitter", "google_plus", "linkedin", "pinterest", "email"];
-                            </script>
-                            <script type="text/javascript" src="//static.addtoany.com/menu/page.js"></script>-->
-                            <!-- AddToAny END -->
-
-                            <!--<a class="btn btn-success" href=""><span class="fa fa-download"></span> Download</a>-->
-                            <div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="true" data-auto-logout-link="true"> Login with facebook </div>
-                        </div>
-                    </div>
-                    <h3>A beautiful web app that empowers open data, APi and machine learning<p> to make us love traffic jam</p></h3>
-                </div><!-- Title end-->
-
-                <!-- ===========================
-                SOCIAL & CONTACT
-                ============================ -->
-                <div class="row">
-                    <div class="col-sm-4">
-                        <ul class="list-unstyled">
-                            <li><a href=""><span class="social fa fa-home"></span>Website</a>
-                            </li>
-                            <li><a href=""><span class="social fa fa-skype"></span>Skype ID</a>
-                            </li>
-                            <li><a href="mailto:@"><span class="social fa fa-envelope-o"></span>contact@apijam.com</a>
-                            </li>
-                        </ul>
-                    </div><!-- social 1st col end-->
-
-                    <div class="col-sm-4">
-                        <ul class="list-unstyled">
-                            <li><a href="https://www.facebook.com/apijam"><span class="social fa fa-facebook"></span>Facebook</a>
-                            </li>
-                            <li><a href="https://twitter.com/apijam"><span class="social fa fa-twitter"></span>Twitter</a>
-                            </li>
-                            <li><a href="https://linkedin.com/in/apijam"><span class="social fa fa-linkedin"></span>LinkedIn</a>
-                            </li>
-                        </ul>
-                    </div><!-- social 2nd col end-->
-
-                    <div class="col-sm-4">
-                        <ul class="list-unstyled">
-                            <li><a href="https://github.com/dnzengou/apijam"><span class="social fa fa-github"></span>GitHub</a>
-                            </li>
-                            <li><a href="https://www.instagram.com/apijam"><span class="social fa fa-instagram"></span>Instagram</a>
-                            </li>
-                            <li><a href=""><span class="social fa fa-plus"></span>More</a><p><a href="map.html"> Map </a>, Social feeds</p>
-                            </li>
-                        </ul>
-                    </div><!-- social 3rd col end-->
-                </div><!-- header social end-->
-            </div><!-- header right end-->
-        </div><!-- header end-->
-
-        <hr class="firsthr">
+                var zoomToAddress = function() {
+          var address = document.getElementById('address').value;
+      address = (address + geocodeBias);
+          geocoder.geocode({
+            address: address
+          }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+              map.setCenter(results[0].geometry.location);
+              map.setZoom(searchZoom);
+            } else {
+              window.alert('Address could not be geocoded: ' + status);
+            }
+          });
+        };
+        google.maps.event.addDomListener(document.getElementById('search'),
+            'click', zoomToAddress);
+        google.maps.event.addDomListener(window, 'keypress', function(e) {
+          if (e.keyCode == 13) {
+            zoomToAddress();
+          }
+        });
+        google.maps.event.addDomListener(document.getElementById('reset'),
+            'click', function() {
+              map.setCenter(defaultCenter);
+              map.setZoom(defaultZoom);
+              layer.setOptions({
+                query: {
+                  select: geometryColumn,
+                  from: tableid
+                }
+              });
+            });
+              
+            }
+            
+            function addListeners() {
+              google.maps.event.addListener(layer, 'mouseover', function(fEvent) {
+                var row = fEvent.row;
+              });
+            }
+            
+            function initialize() {
+              map = new google.maps.Map(document.getElementById('map'), {
+                center: new google.maps.LatLng(defaultCenter),
+                zoom: defaultZoom,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+              });
+      var transitLayer = new google.maps.TransitLayer();
+  transitLayer.setMap(map);
+  var bikeLayer = new google.maps.BicyclingLayer();
+  bikeLayer.setMap(map);
+  var trafficLayer = new google.maps.TrafficLayer();
+  trafficLayer.setMap(map);
+              loadMap();
+            }
+        </script>
 
 
-<div class="container">
-<iframe src="https://docs.google.com/presentation/d/13BFiVIdbhPF65v28Tjy2HuWnTysT16O95njRv7W3bKE/embed?start=false&loop=true&delayms=3000" frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
-</div>
+        </head>
 
-        <hr class="secondhr">
+        <body onload="initialize();">
 
-
-<style>
-* {box-sizing:border-box}
-body {font-family: Verdana,sans-serif;margin:0}
-
-/* Slideshow container */
-.slideshow-container {
-  max-width: 1000px;
-  position: relative;
-  margin: auto;
-}
-
-/* Next & previous buttons */
-.prev, .next {
-  cursor: pointer;
-  position: absolute;
-  top: 0;
-  top: 50%;
-  width: auto;
-  padding: 16px;
-  margin-top: -22px;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  transition: 0.6s ease;
-  border-radius: 0 3px 3px 0;
-}
-
-/* Position the "next button" to the right */
-.next {
-  right: 0;
-  border-radius: 3px 0 0 3px;
-}
-
-/* On hover, add a black background color with a little bit see-through */
-.prev:hover, .next:hover {
-  background-color: rgba(0,0,0,0.8);
-}
-
-/* Caption text */
-.text {
-  color: #f2f2f2;
-  font-size: 15px;
-  padding: 8px 12px;
-  position: absolute;
-  bottom: 8px;
-  width: 100%;
-  text-align: center;
-}
-
-/* Number text (1/5 etc) */
-.numbertext {
-  color: #f2f2f2;
-  font-size: 12px;
-  padding: 8px 12px;
-  position: absolute;
-  top: 0;
-}
-
-/* The dots/bullets/indicators */
-.dot {
-  cursor:pointer;
-  height: 13px;
-  width: 13px;
-  margin: 0 2px;
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;
-  transition: background-color 0.6s ease;
-}
-
-.active, .dot:hover {
-  background-color: #717171;
-}
-
-/* Fading animation --> 1.5s*/
-.fade {
-  -webkit-animation-name: fade;
-  -webkit-animation-duration: 5s;
-  animation-name: fade;
-  animation-duration: 5s;
-}
-
-@-webkit-keyframes fade {
-  from {opacity: .9} 
-  to {opacity: 1}
-}
-
-@keyframes fade {
-  from {opacity: .9} 
-  to {opacity: 1}
-}
-
-/* On smaller screens, decrease text size */
-@media only screen and (max-width: 300px) {
-  .slprev, .slnext,.text {font-size: 11px}
-}
-</style>
-
-<div class="row">
-  <div class="col-sm-7">
-    <h3>How it works</h3>
-    </div>
-</div>
-
-<div class="slideshow-container">
-
-<div class="mySlides fade">
-  <div class="numbertext">1 / 5</div>
-  <img src="img/apps-screen.png" style="width:100%">
-  <div class="text"></div>
-</div>
-
-<div class="mySlides fade">
-  <div class="numbertext">2 / 5</div>
-  <img src="img/apps-launch.png" style="width:100%">
-  <div class="text"></div>
-</div>
-
-<div class="mySlides fade">
-  <div class="numbertext">3 / 5</div>
-  <img src="img/tomorrow-screen.png" style="width:100%">
-  <div class="text"></div>
-</div>
-
-<div class="mySlides fade">
-  <div class="numbertext">4 / 5</div>
-  <img src="img/notification-screen.png" style="width:100%">
-  <div class="text"></div>
-</div>
-
-<div class="mySlides fade">
-  <div class="numbertext">5 / 5</div>
-  <img src="img/map-screen.png" style="width:100%">
-  <div class="text"></div>
-</div>
-
-
-<br>
-
-<div style="text-align:center">
-  <span class="dot" onclick="currentSlide(1)"></span> 
-  <span class="dot" onclick="currentSlide(2)"></span> 
-  <span class="dot" onclick="currentSlide(3)"></span> 
-  <span class="dot" onclick="currentSlide(4)"></span>
-  <span class="dot" onclick="currentSlide(5)"></span>
-</div>
-
-</div>
-
-
-<!-- Beginning carroussel -->
-
-<!--<div id="myCarousel" class="carousel slide" data-ride="carousel">-->
-  <!-- Indicators -->
-  <!--<ol class="carousel-indicators">
-    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-    <li data-target="#myCarousel" data-slide-to="1"></li>
-    <li data-target="#myCarousel" data-slide-to="2"></li>
-    <li data-target="#myCarousel" data-slide-to="3"></li>
-    <li data-target="#myCarousel" data-slide-to="4"></li>
-    <li data-target="#myCarousel" data-slide-to="5"></li>
-  </ol>-->
-
-  <!-- Wrapper for slides -->
-  <!--<div class="carousel-inner" role="listbox">
-    <div class="item active">
-      <img src="img/apps-screen.png" alt="#" style ="width:100%">
-      <div class="carousel-caption">
-        <h3 class="title" style="color:#ff0025"></h3>
-        <h3></h3>
-      </div>
+<div>
+      <label>Zoom to a location:</label>
+      <input type="text" id="address" value="">
+      <input type="button" id="search" value="Search">
+      <input type="button" id="reset" value="Reset">
     </div>
 
-    <div class="item">
-      <img src="img/apps-launch.png" alt="#" style ="width:100%">
-      <div class="carousel-caption">
-        <h3 class="title" style="color:#ff0025"></h3>
-        <p></p>
-      </div>
-    </div>
-
-    <div class="item">
-      <img src="img/tomorrow-screen.png" alt="#" style ="width:100%">
-      <div class="carousel-caption">
-        <h3 class="title" style="color:#ff0025"></h3>
-        <span></span>
-      </div>
-  </div>
-
-    <div class="item">
-      <img src="img/notification-screen.png" alt="#" style ="width:100%">
-      <div class="carousel-caption">
-        <h3 class="title" style="color:#ff0025"></h3>
-        <span></span>
-      </div>
-  </div>
-
-    <div class="item">
-      <img src="img/map-screen.png" alt="#" style ="width:100%">
-      <div class="carousel-caption">
-        <h3 class="title" style="color:#ff0025"></h3>
-        <span></span>
-      </div>
-  </div>
-
-  <!-- Left and right controls -->
-
-<!-- Adjust width -->
-
-  <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-    <span class="fa fa-chevron-left" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-    <span class="fa fa-chevron-right" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
-</div>
-
-<hr>
-
-
-
-<div class="row">
-  <div class="">
-    <h2>Have a question?</h2>
-    <span>ApiJam is best friend with Facebook bot messenger, Twitter bot and Google Custom Search</span>
-  </div>
+<form action="location.html">
+  Add a new location :
+  <input type="image" src="img/share.png" alt="submit">
+</form>
+<!-- <input type="text" name="fname"> -->
   
-    <div class="col-xs-6"><img class="" src="img/qr-apibot.png" alt=""><a href="https://github.com/dnzengou/apijam"><p>Ask ApiBot</p></a>
-    </div>
-    <!--<div class="col-md-4">
-    <img class="propic" src="img/qr-apibot.png" alt=""><a href="https://github.com/dnzengou/apijam"></a><p>Ask ApiBot</p>
-    </div>-->
-
-    <div class="col-xs-6"><img class="" src="img/apibot.png" alt=""><a href="https://github.com/dnzengou/apijam"><p>Check ApiTweet</p></a>
-    </div>
-
-    <div class=""><a class="fa fa-google" ><p>Google on ApiSearch</p></a>
-    </div>
-
-  </div>
-
-<hr>
-
-
-<div id='cse' style='width: 100%;'>Loading</div>
-<script src='//www.google.com/jsapi' type='text/javascript'></script>
-<script type='text/javascript'>
-google.load('search', '1', {language: 'en', style: google.loader.themes.V2_DEFAULT});
-google.setOnLoadCallback(function() {
-  var customSearchOptions = {};
-  var orderByOptions = {};
-  orderByOptions['keys'] = [{label: 'Relevance', key: ''} , {label: 'Date', key: 'date'}];
-  customSearchOptions['enableOrderBy'] = true;
-  customSearchOptions['orderByOptions'] = orderByOptions;
-  var imageSearchOptions = {};
-  imageSearchOptions['layout'] = 'google.search.ImageSearch.LAYOUT_POPUP';
-  customSearchOptions['enableImageSearch'] = true;
-  var customSearchControl =   new google.search.CustomSearchControl('002971305045365881636:6-qj6wv5peq', customSearchOptions);
-  customSearchControl.setResultSetSize(google.search.Search.SMALL_RESULTSET);
-  var options = new google.search.DrawOptions();
-  options.setAutoComplete(true);
-  customSearchControl.draw('cse', options);
-}, true);
-</script>
-<style type='text/css'>
-  .gsc-control-cse {
-    font-family: Arial, sans-serif;
-    border-color: #FFFFFF;
-    background-color: #FFFFFF;
-  }
-  .gsc-control-cse .gsc-table-result {
-    font-family: Arial, sans-serif;
-  }
-  input.gsc-input, .gsc-input-box, .gsc-input-box-hover, .gsc-input-box-focus {
-    border-color: #D9D9D9;
-  }
-  input.gsc-search-button, input.gsc-search-button:hover, input.gsc-search-button:focus {
-    border-color: #666666;
-    background-color: #CECECE;
-    background-image: none;
-    filter: none;
-
-  }
-  .gsc-tabHeader.gsc-tabhInactive {
-    border-color: #FF9900;
-    background-color: #FFFFFF;
-  }
-  .gsc-tabHeader.gsc-tabhActive {
-    border-color: #E9E9E9;
-    background-color: #E9E9E9;
-    border-bottom-color: #FF9900
-  }
-  .gsc-tabsArea {
-    border-color: #FF9900;
-  }
-  .gsc-webResult.gsc-result, .gsc-results .gsc-imageResult {
-    border-color: #FFFFFF;
-    background-color: #FFFFFF;
-  }
-  .gsc-webResult.gsc-result:hover, .gsc-imageResult:hover {
-    border-color: #FFFFFF;
-    background-color: #FFFFFF;
-  }
-  .gs-webResult.gs-result a.gs-title:link, .gs-webResult.gs-result a.gs-title:link b, .gs-imageResult a.gs-title:link, .gs-imageResult a.gs-title:link b  {
-    color: #0000CC;
-  }
-  .gs-webResult.gs-result a.gs-title:visited, .gs-webResult.gs-result a.gs-title:visited b, .gs-imageResult a.gs-title:visited, .gs-imageResult a.gs-title:visited b {
-    color: #0000CC;
-  }
-  .gs-webResult.gs-result a.gs-title:hover, .gs-webResult.gs-result a.gs-title:hover b, .gs-imageResult a.gs-title:hover, .gs-imageResult a.gs-title:hover b {
-    color: #0000CC;
-  }
-  .gs-webResult.gs-result a.gs-title:active, .gs-webResult.gs-result a.gs-title:active b, .gs-imageResult a.gs-title:active, .gs-imageResult a.gs-title:active b {
-    color: #0000CC;
-  }
-  .gsc-cursor-page {
-    color: #0000CC;
-  }
-  a.gsc-trailing-more-results:link {
-    color: #0000CC;
-  }
-  .gs-webResult .gs-snippet, .gs-imageResult .gs-snippet, .gs-fileFormatType {
-    color: #000000;
-  }
-  .gs-webResult div.gs-visibleUrl, .gs-imageResult div.gs-visibleUrl {
-    color: #008000;
-  }
-  .gs-webResult div.gs-visibleUrl-short {
-    color: #008000;
-  }
-  .gs-webResult div.gs-visibleUrl-short  {
-    display: none;
-  }
-  .gs-webResult div.gs-visibleUrl-long {
-    display: block;
-  }
-  .gs-promotion div.gs-visibleUrl-short {
-    display: none;
-  }
-  .gs-promotion div.gs-visibleUrl-long  {
-    display: block;
-  }
-  .gsc-cursor-box {
-    border-color: #FFFFFF;
-  }
-  .gsc-results .gsc-cursor-box .gsc-cursor-page {
-    border-color: #E9E9E9;
-    background-color: #FFFFFF;
-    color: #0000CC;
-  }
-  .gsc-results .gsc-cursor-box .gsc-cursor-current-page {
-    border-color: #FF9900;
-    background-color: #FFFFFF;
-    color: #0000CC;
-  }
-  .gsc-webResult.gsc-result.gsc-promotion {
-    border-color: #336699;
-    background-color: #FFFFFF;
-  }
-  .gsc-completion-title {
-    color: #0000CC;
-  }
-  .gsc-completion-snippet {
-    color: #000000;
-  }
-  .gs-promotion a.gs-title:link,.gs-promotion a.gs-title:link *,.gs-promotion .gs-snippet a:link  {
-    color: #0000CC;
-  }
-  .gs-promotion a.gs-title:visited,.gs-promotion a.gs-title:visited *,.gs-promotion .gs-snippet a:visited {
-    color: #0000CC;
-  }
-  .gs-promotion a.gs-title:hover,.gs-promotion a.gs-title:hover *,.gs-promotion .gs-snippet a:hover  {
-    color: #0000CC;
-  }
-  .gs-promotion a.gs-title:active,.gs-promotion a.gs-title:active *,.gs-promotion .gs-snippet a:active {
-    color: #0000CC;
-  }
-  .gs-promotion .gs-snippet, .gs-promotion .gs-title .gs-promotion-title-right, .gs-promotion .gs-title .gs-promotion-title-right * {
-    color: #000000;
-  }
-  .gs-promotion .gs-visibleUrl,.gs-promotion .gs-visibleUrl-short  {
-    color: #008000;
-  }
-</style>
-
-
-<!-- Facebook Login JavaScript Example-->
-
-<script>
-  // This is called with the results from from FB.getLoginStatus().
-  function statusChangeCallback(response) {
-    console.log('statusChangeCallback');
-    console.log(response);
-    // The response object is returned with a status field that lets the
-    // app know the current login status of the person.
-    // Full docs on the response object can be found in the documentation
-    // for FB.getLoginStatus().
-    if (response.status === 'connected') {
-      // Logged into your app and Facebook.
-      testAPI();
-    } else if (response.status === 'not_authorized') {
-      // The person is logged into Facebook, but not your app.
-      document.getElementById('status').innerHTML = 'Please log ' +
-        'into this app.';
-    } else {
-      // The person is not logged into Facebook, so we're not sure if
-      // they are logged into this app or not.
-      document.getElementById('status').innerHTML = 'Please log ' +
-        'into Facebook.';
-    }
-  }
-  // This function is called when someone finishes with the Login
-  // Button.  See the onlogin handler attached to it in the sample
-  // code below.
-  function checkLoginState() {
-    FB.getLoginStatus(function(response) {
-      statusChangeCallback(response);
-    });
-  }
-  window.fbAsyncInit = function() {
-  FB.init({
-    appId      : '{your-app-id}',
-    cookie     : true,  // enable cookies to allow the server to access 
-                        // the session
-    xfbml      : true,  // parse social plugins on this page
-    version    : 'v2.5' // use graph api version 2.5
-  });
-  // Now that we've initialized the JavaScript SDK, we call 
-  // FB.getLoginStatus().  This function gets the state of the
-  // person visiting this page and can return one of three states to
-  // the callback you provide.  They can be:
-  //
-  // 1. Logged into your app ('connected')
-  // 2. Logged into Facebook, but not your app ('not_authorized')
-  // 3. Not logged into Facebook and can't tell if they are logged into
-  //    your app or not.
-  //
-  // These three cases are handled in the callback function.
-  FB.getLoginStatus(function(response) {
-    statusChangeCallback(response);
-  });
-  };
-  // Load the SDK asynchronously
-  (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
-  // Here we run a very simple test of the Graph API after login is
-  // successful.  See statusChangeCallback() for when this call is made.
-  function testAPI() {
-    console.log('Welcome!  Fetching your information.... ');
-    FB.api('/me', function(response) {
-      console.log('Successful login for: ' + response.name);
-      document.getElementById('status').innerHTML =
-        'Thanks for logging in, ' + response.name + '!';
-    });
-  }
-</script>
-
-<!--
-  Below we include the Login Button social plugin. This button uses
-  the JavaScript SDK to present a graphical Login button that triggers
-  the FB.login() function when clicked.
--->
-
-<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
-</fb:login-button>
-
-<div id="status">
-</div>
-
-<script>
-var slideIndex = 1;
-showSlides(slideIndex);
-
-function plusSlides(n) {
-  showSlides(slideIndex += n);
-}
-
-function currentSlide(n) {
-  showSlides(slideIndex = n);
-}
-
-function showSlides(n) {
-  var i;
-  var slides = document.getElementsByClassName("mySlides");
-  var dots = document.getElementsByClassName("dot");
-  if (n > slides.length) {slideIndex = 1}    
-  if (n < 1) {slideIndex = slides.length} ;
-  for (i = 0; i < slides.length; i++) {
-      slides[i].style.display = "none";  
-  }
-  for (i = 0; i < dots.length; i++) {
-      dots[i].className = dots[i].className.replace(" active", "");
-  }
-  slides[slideIndex-1].style.display = "block";  
-  dots[slideIndex-1].className += " active";
-}
-</script>
+      <div id="map">
+        </div>
 
 
     <!-- ===========================
     FOOTER
     =========================== -->
-    <footer class="text-center">
-        <div class="row">
-            <p>&copy; <a href="">ApiBot - Designed by <a target="_blank" href="dnzengou.github.io/cvstrap/">E. Désiré Nzengou</a>.
+    <!--<footer class="text-center">
+        <div class="footer">
+            <p>&copy; <a href="">ApiBot - Designed by <a target="_blank" href="dnzengou.github.io/cvstrap/">E. D.</a>.
             </p>
         </div>
     </footer>
+    <script src="js/evenfly.js"></script>-->
 
     <!--necessary scripts and plugins-->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
     <script src="js/jquery.nicescroll.min.js"></script>
     <script src="js/evenfly.js"></script>
+
 </body>
 
 </html>
