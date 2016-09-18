@@ -49,7 +49,7 @@
             var map, layer;
             var googleApiKey = "AIzaSyCsbzuJDUEOoq-jS1HO-LUXW4qo0gW9FNs"; // Get from Google API console https://code.google.com/apis/console
       var geometryColumn = "latlon"; // geometry column name, may be Address for a points map
-      var tableid = '1hZisuyJgLTO_1CrtRUFY3shwgN9A9dSVl6r227XR'; // Take from Fusion Tables About page -- initially 1bpjVp3U_Etpq_57_lz_E4thrh-qXHSDs4jI4_doX
+      var tableid = '1hURpzq2Zp6rq6kaC5K-5uUFXgkeLOdsDDZ8Bjsc2'; /*1hZisuyJgLTO_1CrtRUFY3shwgN9A9dSVl6r227XR';*/ // Take from Fusion Tables About page -- initially 1bpjVp3U_Etpq_57_lz_E4thrh-qXHSDs4jI4_doX
       var defaultCenter = new google.maps.LatLng(50.8504, 4.3517); // Map centre in lat/lon for default and reset
       var defaultZoom = 11; // Zoom level for default map view and reset
       var searchZoom = 14; // Zoom level for map search
@@ -148,7 +148,7 @@
 
 <!-- Dropdown Structure -->
 <!--<ul id="dropdown1" class="dropdown-content">
-  <li><a href="#!">This map has been desgned to serve as a all-in-one easy and simple of use tool for the persons with limited mobilited</a></li>
+  <li><a href="#!">This map has been desgned to serve as a all-in-one easy and simple of use tool for the persons with limited mobility</a></li>
   <li class="divider"></li>
   <li><a href="#!">Selected where your departure and arrival desitnations; Select the icon you feel closer too; Follow the adequate path</a></li>
 </ul>-->
@@ -180,16 +180,16 @@
   
   <ul id="slide-out" class="side-nav">
     <li><div class="userView">
-      <img class="background" src="images/office.jpg">
-      <a href="#!user"><img class="circle" src="images/yuna.jpg"></a>
-      <a href="#!name"><span class="white-text name">John Doe</span></a>
-      <a href="#!email"><span class="white-text email">jdandturk@gmail.com</span></a>
+      <img class="background" src="img/background_300x176.jpg">
+      <a href="#!user"><img class="circle" src="img/favicons/apple-touch-icon-64x64.png"></a>
+      <a href="#!name"><span class="white-text name">MolenGeek3 - Team</span></a>
+      <a href="#!email"><span class="white-text email">email-me@mymail.com</span></a>
     </div></li>
-    <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
-    <li><a href="#!">Second Link</a></li>
+    <li><a href="#!"><i class="material-icons">description</i>About</a></li>
+    <li><a href="http://m.me/559245534184326"><i class="material-icons">chat</i>Contact</a></li>
     <li><div class="divider"></div></li>
-    <li><a class="subheader">Subheader</a></li>
-    <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+    <li><a class="subheader" href="#map"><i class="material-icons">supervisor_account</i>The team</a></li>
+    <!--<li><a class="waves-effect" href="#!">Third Link With Waves</a></li>-->
   </ul>
   <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i>
   </a>
@@ -213,12 +213,12 @@
 
 
   <div id="">
-      <label><strong>Leave from </strong></label>
+      <label><i class="material-icons">navigation</i> <strong>Leave from </strong></label>
       <input type="text" id="address" value="">
       <input type="button" id="search" value="Search">
       <input type="button" id="reset" value="Reset">
 <br>
-      <label><strong>To </strong></label>
+      <label><i class="material-icons">location_on</i> <strong>To </strong></label>
       <input type="text" id="address" value="">
     </div>
 
@@ -230,10 +230,10 @@
       <i class="material-icons">accessible</i>
     </a>
     <ul>
-      <li><a class="btn-floating red"><i class="material-icons"><i class="material-icons">pregnant_woman</i></i></a></li>
-      <li><a class="btn-floating yellow darken-1"><i class="material-icons"><i class="material-icons">favorite_border</i></i></a></li>
-      <li><a class="btn-floating green"><i class="material-icons"><i class="material-icons">accessibility</i></i></a></li>
-      <li><a class="btn-floating blue"><i class="material-icons"><i class="material-icons">record_voice_over</i></i></a></li>
+      <li><a class="btn-floating red"><i class="material-icons">pregnant_woman</i></a></li>
+      <li><a class="btn-floating yellow darken-1"><i class="material-icons">favorite_border</i></a></li>
+      <li><a class="btn-floating green"><i class="material-icons">accessibility</i></a></li>
+      <li><a class="btn-floating blue"><i class="material-icons">record_voice_over</i></a></li>
     </ul>
   </div>
 
@@ -259,9 +259,31 @@
     
     <!--<footer class="page-footer teal">-->
   <footer class="page-footer light-blue lighten-2">
+
+        <section id="about" class="">
+      <div class="row">
+        <div class="col s6">
+          <h5 class="white-text"><i class="material-icons">description</i> </h5>
+          <hr class="small">
+          <p class="grey-text text-lighten-4">This map has been desgned to serve as a all-in-one easy and simple of use tool for the persons with limited mobility</p>
+        </div>
+
+<section id="contact" class="">
+        <div class="col s6">
+          <h5 class="white-text"><i class="material-icons"> contact_phone</i></h5>
+                    <hr class="small"> 
+                    <i class="material-icons" style="color:white">room</i><p class="grey-text text-lighten-4">Molenbeek
+                        <br>Brussels, Belgium</p>
+        </div>
+      </div>
+</section>
+
+        </section>
+
+    
     <div class="footer-copyright">
       <div class="container">
-      Inspired by <a class="brown-text text-lighten-3" href="http://materializecss.com" style="color:pink">Materialize</a> Made with <i class="material-icons"><i class="material-icons">favorite_border</i></i> by <a class="brown-text text-lighten-3" href="http://desireyavro.com" style="color:pink">MolenGeek-Team</a>
+      Inspired by <a class="brown-text text-lighten-3" href="http://materializecss.com" style="color:pink">Materialize</a> Made with <i class="material-icons">favorite_border</i> by <a class="brown-text text-lighten-3" href="http://desireyavro.com" style="color:pink">MolenGeek-Team</a>
       </div>
     </div>
   </footer>
